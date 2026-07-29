@@ -1,0 +1,6 @@
+interface:
+  display_name: "恋综截图生成器"
+  short_description: "按场景添加城市景点台标、生活游戏对白与综艺字幕包装"
+  default_prompt: "Use $make-dating-show-screenshot to turn this photo into a scene-aware Chinese reality-show screenshot."
+policy:
+  allow_implicit_invocation: true

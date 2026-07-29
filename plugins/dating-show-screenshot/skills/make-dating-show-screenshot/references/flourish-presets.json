@@ -1,0 +1,16 @@
+{
+  "default": "little-moments.png",
+  "categories": {
+    "合住日常": "little-moments.png",
+    "游戏互动": "play-along.png",
+    "做饭吃饭": "taste-of-today.png",
+    "出游行动": "wander-together.png",
+    "朋友闲聊": "after-sunset.png",
+    "轻松吐槽": "little-moments.png",
+    "采访回应": "little-moments.png",
+    "暧昧试探": "between-us.png",
+    "嘴硬逗趣": "between-us.png",
+    "认真拉扯": "after-sunset.png",
+    "心动回应": "between-us.png"
+  }
+}

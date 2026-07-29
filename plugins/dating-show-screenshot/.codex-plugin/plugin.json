@@ -1,0 +1,44 @@
+{
+  "name": "dating-show-screenshot",
+  "version": "1.3.9",
+  "description": "Generate fictional Chinese lifestyle-reality-show screenshots from uploaded photos.",
+  "author": {
+    "name": "Dating Show Screenshot Contributors"
+  },
+  "license": "MIT",
+  "keywords": [
+    "image-editing",
+    "reality-show",
+    "chinese-subtitles",
+    "broadcast-graphics",
+    "dating-show"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "恋综截图生成器",
+    "shortDescription": "为照片添加虚构台标、生活化对白、英文花字与冠名包装",
+    "longDescription": "把用户照片处理成虚构的中文恋综或生活综艺截图。可按场景自动选择生活、游戏、出游、朋友或轻暧昧对白，并提供原创台标、地区轮廓、英文花字、柔和粉灰字幕、三档真实白字弹幕、人物保护、照片卡、姓名标和地区食物冠名。",
+    "developerName": "Dating Show Screenshot Contributors",
+    "category": "Creativity",
+    "capabilities": [
+      "Image editing",
+      "Deterministic rendering",
+      "Reference layout variants",
+      "Portrait-aware danmaku",
+      "Role-based broadcast typography",
+      "Customizable assets"
+    ],
+    "defaultPrompt": [
+      "把这张照片做成生活化恋综截图，自动选对白。",
+      "加游戏综艺字幕、弹幕和虚构冠名。",
+      "用我指定的台标、花字和对白处理照片。"
+    ],
+    "brandColor": "#E74866",
+    "composerIcon": "./assets/logo.png",
+    "logo": "./assets/logo.png",
+    "screenshots": [
+      "./assets/demo-output.png",
+      "./assets/demo-photo-card.png"
+    ]
+  }
+}

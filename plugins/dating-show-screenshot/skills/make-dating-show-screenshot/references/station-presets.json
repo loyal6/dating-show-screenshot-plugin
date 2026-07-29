@@ -1,0 +1,79 @@
+{
+  "presets": [
+    {
+      "id": "shuangyashan",
+      "station": "双鸭山卫视",
+      "bug_mode": "map",
+      "bug_asset": "shuangyashan.png",
+      "map_feature": "双鸭山市",
+      "moods": ["暧昧", "约会", "轻松"]
+    },
+    {
+      "id": "mudanjiang",
+      "station": "牡丹江卫视",
+      "bug_mode": "map",
+      "bug_asset": "mudanjiang.png",
+      "map_feature": "牡丹江市",
+      "moods": ["朋友闲聊", "采访", "合住日常"]
+    },
+    {
+      "id": "lijiang",
+      "station": "漓江卫视",
+      "bug_mode": "icon",
+      "bug_asset": "rising-ribbon.png",
+      "moods": ["出游", "户外", "风景"]
+    },
+    {
+      "id": "erhai",
+      "station": "洱海卫视",
+      "bug_mode": "icon",
+      "bug_asset": "moon-bay.png",
+      "moods": ["夜谈", "安慰", "朋友闲聊"]
+    },
+    {
+      "id": "aletai",
+      "station": "阿勒泰卫视",
+      "bug_mode": "map",
+      "bug_asset": "aletai.png",
+      "map_feature": "阿勒泰地区",
+      "moods": ["旅行", "雪景", "户外"]
+    },
+    {
+      "id": "dunhuang",
+      "station": "敦煌卫视",
+      "bug_mode": "map",
+      "bug_asset": "jiuquan.png",
+      "map_feature": "酒泉市",
+      "moods": ["游戏", "任务", "热闹"]
+    },
+    {
+      "id": "mohe",
+      "station": "漠河卫视",
+      "bug_mode": "map",
+      "bug_asset": "daxinganling.png",
+      "map_feature": "大兴安岭地区",
+      "moods": ["夜谈", "慢综艺", "安静"]
+    },
+    {
+      "id": "xihu",
+      "station": "西湖卫视",
+      "bug_mode": "icon",
+      "bug_asset": "twin-river.png",
+      "moods": ["做饭", "合住日常", "朋友闲聊"]
+    },
+    {
+      "id": "yalongwan",
+      "station": "亚龙湾卫视",
+      "bug_mode": "icon",
+      "bug_asset": "star-orbit.png",
+      "moods": ["海边", "度假", "轻松"]
+    },
+    {
+      "id": "gulangyu",
+      "station": "鼓浪屿卫视",
+      "bug_mode": "icon",
+      "bug_asset": "mountain-pulse.png",
+      "moods": ["出游", "音乐", "日落"]
+    }
+  ]
+}

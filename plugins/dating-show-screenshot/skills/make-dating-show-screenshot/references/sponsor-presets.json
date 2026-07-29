@@ -1,0 +1,20 @@
+{
+  "default": {
+    "asset": "noodle-bowl-lockup.png",
+    "brand": "桂林米粉",
+    "tagline": "",
+    "designation": "独家冠名"
+  },
+  "stations": {
+    "shuangyashan": {"asset": "fish-platter-lockup.png", "brand": "赫哲全鱼宴", "tagline": "", "designation": "独家冠名"},
+    "mudanjiang": {"asset": "fish-platter-lockup.png", "brand": "镜泊湖鱼宴", "tagline": "", "designation": "独家冠名"},
+    "lijiang": {"asset": "noodle-bowl-lockup.png", "brand": "桂林米粉", "tagline": "", "designation": "独家冠名"},
+    "erhai": {"asset": "dairy-snack-lockup.png", "brand": "大理乳扇", "tagline": "", "designation": "独家冠名"},
+    "aletai": {"asset": "camel-milk-lockup.png", "brand": "阿勒泰驼乳粉", "tagline": "", "designation": "独家冠名"},
+    "dunhuang": {"asset": "noodle-bowl-lockup.png", "brand": "驴肉黄面", "tagline": "", "designation": "独家冠名"},
+    "mohe": {"asset": "fish-platter-lockup.png", "brand": "漠河冷水鱼", "tagline": "", "designation": "独家冠名"},
+    "xihu": {"asset": "dessert-bowl-lockup.png", "brand": "西湖藕粉", "tagline": "", "designation": "独家冠名"},
+    "yalongwan": {"asset": "dessert-bowl-lockup.png", "brand": "海南清补凉", "tagline": "", "designation": "独家冠名"},
+    "gulangyu": {"asset": "noodle-bowl-lockup.png", "brand": "厦门沙茶面", "tagline": "", "designation": "独家冠名"}
+  }
+}
