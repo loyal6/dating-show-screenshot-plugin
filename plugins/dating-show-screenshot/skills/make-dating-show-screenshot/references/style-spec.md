@@ -47,7 +47,7 @@ Do not force romance when the photo only suggests ordinary life, games, travel, 
 - Center the complete `speaker + slash + dialogue` group as one measured unit inside the safe span from roughly 12.5% to 82% of the frame. Do not pin a short line to the left or center the dialogue independently from the speaker.
 - Use one supplied transparent handwritten-English flourish as a recognizable background accent at the speaker label's upper-left. Keep it around 9–10% of frame width and 6–7% of frame height, retain roughly 70–75% opacity, rotate it only about 4° clockwise, and position it high enough that the full cursive silhouette remains legible while the speaker text covers only a small part of its lower-right edge. It must stay identifiable as lettering rather than dissolving into an anonymous decorative stroke.
 - Speaker/role in white, then a thin white slash.
-- Speaker and main dialogue: white Chinese Song/serif style, 50–56 px, medium-to-semibold weight, with only a restrained 1 px dark edge or soft shadow. Do not reuse the heavy station/comment font here.
+- Speaker/role and main dialogue: use the bundled LXGW WenKai Regular at 50–56 px. Render in white with only a restrained 1 px dark edge or soft shadow. Keep the literary Kai-style strokes readable and do not reuse the heavy station/comment treatment.
 - Build the gray and rose as a bottom-up gradient: color is strongest immediately above the underline and fades continuously upward. Do not create a center glow or fade the color back out before it reaches the line. Crop the effect exactly at the underline so nothing extends below it.
 - Underline: 2–3 px muted rose. Measure the complete `speaker + slash + dialogue` group and make the line follow that exact span with only about 1–1.5% frame-width padding on each side. Short copy must produce a visibly shorter line; never use a fixed full-width underline.
 - Keep the subtitle above the very bottom edge; do not cover faces.
@@ -71,9 +71,17 @@ Do not force romance when the photo only suggests ordinary life, games, travel, 
 | Standard | Station bug at top left, pink-gray gradient lower third, English flourish, one-line food sponsor at bottom right |
 | Floating comments | Standard layout plus light, medium, or full mixed-format top-lane danmaku |
 | Photo card | Dark blurred full-canvas background plus one slightly clockwise-tilted photo with a thick white border; keep station bug, lower third, and sponsor above it |
-| Cast introduction | Standard layout plus one white name label per visible person and a short hot-pink underline stroke |
+| Cast introduction | Standard layout plus one airy white handwritten name beside each visible person's head or upper shoulder and the supplied transparent pink brush curve |
 
 Treat these as composable broadcast layers. Preserve the user's image and do not add real program titles, real broadcaster logos, celebrity cutouts, or real commercial brands.
+
+### Cast-name treatment
+
+- Place each name in nearby negative space beside its matching head or upper shoulder. Keep it close enough to read as identification, but never cover eyes or sit directly across a face.
+- Use the bundled Bai Lu Tongtong font by default: elongated, naturally uneven white Chinese handwriting with a subtle counter-clockwise slant and restrained dark shadow. Do not substitute a brush-calligraphy font, heavy station font, or lower-third serif.
+- Use `assets/ui/cast-name-curve.png` exactly as the default pink stroke. Scale it proportionally to about 113% of the measured name width, place it behind the lower quarter of the glyphs, and rotate it together with the name. Do not redraw it as a straight or synthetic two-line underline.
+- Do not use a box, pill, identity card, `嘉宾：姓名`, profile description, occupation, age, location, or English transliteration unless the user explicitly requests those fields.
+- Treat cast introduction and photo card as independent options. Combine them only when the user asks for both.
 
 ## Sponsor corner
 

@@ -18,6 +18,30 @@ This repository contains or derives from the following third-party materials:
 - Source: <https://www.npmjs.com/package/@fontsource/noto-serif-sc>
 - License copy: `plugins/dating-show-screenshot/skills/make-dating-show-screenshot/assets/fonts/OFL.txt`
 
+## LXGW WenKai / 霞鹜文楷
+
+- Included file: `LXGWWenKai-Regular.ttf`
+- Use: default lower-third speaker label and dialogue
+- License: SIL Open Font License 1.1
+- Source: <https://github.com/lxgw/LxgwWenKai>
+- License copy: `plugins/dating-show-screenshot/skills/make-dating-show-screenshot/assets/fonts/LXGWWenKai-OFL.txt`
+
+The unmodified font is bundled with the plugin. The font file is not sold
+separately, and its original copyright and reserved-name records are preserved.
+
+## Bai Lu Tongtong Handwritten Font / 白路彤彤手写体
+
+- Included file: `BaiLuTongTong-Regular.ttf`
+- Use: optional cast-name labels
+- Authorization: author-declared free commercial use under custom terms
+- Author release: <https://www.zcool.com.cn/work/ZNjkxNjU3MzI=.html>
+- Reference catalog: <https://fonts.zeoseven.com/items/279/>
+- Notice copy: `plugins/dating-show-screenshot/skills/make-dating-show-screenshot/assets/fonts/BaiLuTongTong-AUTHOR-NOTICE.txt`
+
+Preserve the font's embedded copyright/name records and the accompanying
+notice when redistributing it with the plugin. Do not sell the font file by
+itself. This font is not covered by the repository's MIT License.
+
 ## China map GeoJSON
 
 - Package: `china-map-geojson@1.0.4`

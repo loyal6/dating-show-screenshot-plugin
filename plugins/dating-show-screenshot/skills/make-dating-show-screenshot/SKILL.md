@@ -32,6 +32,7 @@ Create a fictional entertainment screenshot from one user-supplied image. Preser
    - treat the uploaded photo as the edit target and bundled assets only as graphic/layout references;
    - preserve all photographic content that the user did not ask to change.
 10. Inspect the result. Check exact Chinese copy, source resolution and color preservation, one-mode-only station bug, a recognizable slightly tilted flourish sitting high behind the speaker label, a centered lower-third group, a measured underline and bottom-up gradient sharing the same horizontal span, crisp sponsor copy, and absence of unintended people or objects.
+    For cast introductions, also check that every name sits beside its matching person's head or upper shoulder in Bai Lu Tongtong-style airy white handwriting, with the supplied pink curve passing behind the lower part of the glyphs. Never render a boxed identity chip, `嘉宾：姓名`, or an app-style label.
 11. If only the text or graphic placement is wrong, rerender deterministically instead of regenerating the photograph.
 12. Save non-destructively and return the image.
 
@@ -91,13 +92,23 @@ python scripts/render_dating_show.py \
 
 Use `--station-bug /absolute/path/logo-or-map.png` to DIY the top-left asset, `--flourish /absolute/path/wordmark.png` to replace the English flourish, `--sponsor "自定义食物名"` to change the sponsor name, `--sponsor-asset /absolute/path/food-lockup.png` to replace the transparent food-and-plaque lockup, or `--no-sponsor` to remove it.
 
-Recreate the tilted-photo and cast-introduction reference variants:
+Recreate the tilted-photo reference variant:
 
 ```bash
 python scripts/render_dating_show.py \
   --input /absolute/path/photo.jpg \
   --output /absolute/path/photo-card-show.png \
   --presentation photo-card \
+  --station-preset lijiang \
+  --category 朋友闲聊
+```
+
+Recreate the cast-introduction reference variant:
+
+```bash
+python scripts/render_dating_show.py \
+  --input /absolute/path/group-photo.jpg \
+  --output /absolute/path/cast-introduction.png \
   --station-preset lijiang \
   --category 朋友闲聊 \
   --name-tag "小满@0.34,0.31" \
@@ -111,9 +122,9 @@ Protect important people in either of two ways:
 - repeat `--protect-zone X1,Y1,X2,Y2` with normalized coordinates to reserve face/subject rectangles;
 - pass `--subject-mask person-mask.png` with white subject pixels and black background to restore the person above the comments, making the comments visually pass behind them. The mask must match the input dimensions and currently supports the standard presentation.
 
-`--name-tag "文字@X,Y"` accepts normalized coordinates from 0 to 1 and can be repeated for group shots.
+`--name-tag "文字@X,Y"` accepts normalized coordinates from 0 to 1 and can be repeated for group shots. Inspect the photo and place each anchor in nearby negative space beside the corresponding head or upper shoulder; do not center names on faces or arrange them as a detached legend. The renderer uses the bundled Bai Lu Tongtong handwriting font and the bundled transparent pink curve supplied by the user. Use `--name-font` to supply another handwritten Chinese font, or `--name-curve` to replace the curve, without changing the lower-third.
 
-Typography is independently DIY-able: use `--station-font` for the station name, badge, and comments; `--caption-font` for the lower-third and cast labels; and `--sponsor-font` for the sponsor plaque. The legacy `--font` option still overrides every role at once.
+Typography is independently DIY-able. By default, the lower-third speaker label and dialogue use the bundled `LXGWWenKai-Regular.ttf`. Use `--station-font` for the station name, badge, and comments; `--caption-font` to explicitly override the lower-third; `--name-font` for cast names; and `--sponsor-font` for the sponsor plaque. The legacy `--font` option still overrides every role at once.
 
 ## Resources
 
@@ -129,4 +140,5 @@ Typography is independently DIY-able: use `--station-font` for the station name,
 - `assets/flourishes/`: six transparent handwritten-English wordmarks.
 - `assets/sponsors/`: transparent fictional food/product cutouts with blank champagne-gold plaques.
 - `assets/ui/like-white.png`: transparent white like icon derived from the user-supplied silhouette.
-- `assets/fonts/`: bundled Noto Sans SC and Noto Serif SC subsets plus their SIL OFL license.
+- `assets/ui/cast-name-curve.png`: cropped transparent pink curve supplied by the user.
+- `assets/fonts/`: bundled Noto Sans SC and Noto Serif SC under SIL OFL, plus the author-declared Bai Lu Tongtong handwriting font and its source notice.

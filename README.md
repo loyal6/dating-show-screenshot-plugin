@@ -46,12 +46,12 @@
 - 6 套透明英文花字：`Little Moments`、`Play Along`、`Taste of Today`、`Wander Together`、`After Sunset`、`Between Us`。
 - 字幕会把“说话人＋斜杠＋对白”作为一个整体在安全区内居中，下划线随整组文字自动伸缩。
 - 渐变雾带与字幕下划线共享同一段动态宽度；英文花字保留清晰笔画、轻微倾斜并上移到说话人左上角后方；冠名牌文字采用无描边清晰渲染。
-- 分角色电视字幕字体：台名和弹幕用粗黑体，对白与嘉宾名默认使用半粗宋体并带轻描边，冠名使用宋体/衬线体。
+- 分角色电视字幕字体：台名和弹幕用粗黑体；下方“嘉宾＋对白”默认使用内置霞鹜文楷常规体；人物姓名默认使用内置白路彤彤手写体；冠名使用宋体/衬线体。
 - 5 类透明地区食物/产品实拍冠名组件，默认按台名匹配并显示在右下角。
 - 可选少量（3）、中等（7）、满屏（14）三档顶部弹幕。
 - 弹幕复刻真实视频样式：统一白色粗字、轻描边，少量加入由用户图形转制的透明白色点赞图标与数字。
 - 支持人物保护框；提供人物蒙版时，弹幕可从人物背后穿过。
-- 可复现首批参考图的四类版式：标准字幕、顶部弹幕、倾斜白框照片卡、多人姓名标。
+- 可复现首批参考图的四类版式：标准字幕、顶部弹幕、倾斜白框照片卡、人物旁手写姓名标；照片卡与姓名标可独立启用。
 - 默认使用 Pillow 无损图层合成：不重新生成照片，保留原始像素、原生分辨率、ICC 色彩配置与曝光，只叠加透明包装。
 - 仅在用户明确要求改变照片内容时使用 Codex/ChatGPT 图像编辑。
 - 竖图自动居中，使用暗化模糊背景扩展成 16:9；不拉伸、不裁人，也不缩小原图。
@@ -130,7 +130,7 @@ codex plugin add dating-show-screenshot@dating-show-screenshot
 - `标准`：台标、英文花字、渐变字幕、右下角冠名；
 - `顶部弹幕`：标准模板加少量 / 中等 / 满屏三档弹幕；
 - `照片卡`：倾斜白框照片叠在暗色模糊背景上；
-- `嘉宾介绍`：在人物附近添加姓名和粉色短下划线。
+- `嘉宾介绍`：在每个人物头部或肩部旁添加轻盈白色手写姓名和玫粉色上扬短笔触；不会生成身份卡片或“嘉宾：姓名”标签。
 
 ### 3. 完整 DIY
 
@@ -193,6 +193,8 @@ python plugins/dating-show-screenshot/skills/make-dating-show-screenshot/scripts
 --sponsor-asset /absolute/path/food-and-gold-plaque.png
 --presentation photo-card
 --name-tag "小满@0.35,0.30"
+--name-font /absolute/path/handwritten-chinese.ttf
+--name-curve /absolute/path/transparent-pink-curve.png
 --danmaku-density medium
 --comment "冰棍要化了"
 --comment "她真的很会拍"
@@ -206,13 +208,13 @@ python plugins/dating-show-screenshot/skills/make-dating-show-screenshot/scripts
 
 `--station-bug` 接受透明 PNG；请自行保证它是“单独地图轮廓”或“单独原创图标”，不要把两者叠成一枚台标。
 
-`--name-tag "文字@X,Y"` 使用 0–1 的归一化画布坐标，可重复传入。`--presentation photo-card` 会生成暗化模糊背景、倾斜白框照片卡，并继续叠加台标、字幕和冠名。
+`--name-tag "文字@X,Y"` 使用 0–1 的归一化画布坐标，可重复传入。坐标应放在对应人物头部或上肩旁的留白处。默认使用白路彤彤手写体、轻微倾斜，以及用户提供的透明粉色弧线；弧线会按姓名实测宽度缩放，并从字形下部穿过。不会生成方框、身份说明或 `嘉宾：姓名`。`--name-font` 可单独替换姓名字体，`--name-curve` 可替换透明弧线，两者都不影响下方对白。`--presentation photo-card` 会生成暗化模糊背景、倾斜白框照片卡，并继续叠加台标、字幕和冠名；只有同时传入 `--name-tag` 时才会组合姓名标。
 
 `--danmaku-density light|medium|full` 分别生成 3、7、14 条弹幕；需要逐字指定时，重复使用 `--comment "弹幕内容"`，最多 24 条。排版集中在顶部两至三条紧凑轨道，优先填满右上空间并避开台标；样式统一为白色粗字与轻描边，只在少数弹幕后加入点赞图标和数字。
 
 `--protect-zone "X1,Y1,X2,Y2"` 使用 0–1 坐标保护人物或脸部区域，可重复提供。若准备了与原图同尺寸的黑白人物蒙版，使用 `--subject-mask person-mask.png`：白色人物会重新盖在弹幕上方，形成弹幕从人物背后穿过的效果。
 
-字体也可以分角色 DIY：`--station-font` 控制台名、独播标和弹幕，`--caption-font` 控制对白、嘉宾名和姓名标，`--sponsor-font` 控制冠名牌。旧参数 `--font` 仍可一次覆盖全部文字。
+字体也可以分角色 DIY：`--station-font` 控制台名、独播标和弹幕，`--caption-font` 控制对白，`--name-font` 控制人物姓名，`--name-curve` 控制姓名下方的透明粉色笔触，`--sponsor-font` 控制冠名牌。旧参数 `--font` 仍可一次覆盖全部文字。
 
 默认冠名按台名匹配：
 

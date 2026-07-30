@@ -24,10 +24,13 @@ FLOURISH_ASSETS = ROOT / "assets" / "flourishes"
 SPONSOR_ASSETS = ROOT / "assets" / "sponsors"
 UI_ASSETS = ROOT / "assets" / "ui"
 LIKE_ICON_ASSET = UI_ASSETS / "like-white.png"
+CAST_NAME_CURVE_ASSET = UI_ASSETS / "cast-name-curve.png"
 BUNDLED_FONT = ROOT / "assets" / "fonts" / "NotoSansSC-Regular.ttf"
 BUNDLED_BOLD_FONT = ROOT / "assets" / "fonts" / "NotoSansSC-SemiBold.ttf"
+BUNDLED_DIALOGUE_FONT = ROOT / "assets" / "fonts" / "LXGWWenKai-Regular.ttf"
 BUNDLED_CAPTION_FONT = ROOT / "assets" / "fonts" / "NotoSerifSC-Regular.ttf"
 BUNDLED_CAPTION_BOLD_FONT = ROOT / "assets" / "fonts" / "NotoSerifSC-SemiBold.ttf"
+BUNDLED_NAME_FONT = ROOT / "assets" / "fonts" / "BaiLuTongTong-Regular.ttf"
 
 DANMAKU_COUNTS = {
     "none": 0,
@@ -163,7 +166,17 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--caption-font",
         type=Path,
-        help="Override the lower-third dialogue, speaker, and cast-name font.",
+        help="Override the lower-third dialogue and speaker font.",
+    )
+    parser.add_argument(
+        "--name-font",
+        type=Path,
+        help="Override the cast-name handwriting font.",
+    )
+    parser.add_argument(
+        "--name-curve",
+        type=Path,
+        help="Override the transparent pink brush curve beneath cast names.",
     )
     parser.add_argument(
         "--sponsor-font",
@@ -855,36 +868,73 @@ def draw_name_tags(
     base: Image.Image,
     font_path: Path,
     tags: list[tuple[str, float, float]],
+    curve_path: Path = CAST_NAME_CURVE_ASSET,
 ) -> None:
+    """Draw handwritten cast names with the supplied pink brush curve."""
     if not tags:
         return
+    if not curve_path.exists():
+        raise SystemExit(f"Cast-name curve not found: {curve_path}")
     width, height = base.size
     layer = Image.new("RGBA", base.size)
-    draw = ImageDraw.Draw(layer)
-    tag_font = font(font_path, max(20, int(height * 0.031)))
+    tag_font = font(font_path, max(24, int(height * 0.039)))
+    with Image.open(curve_path) as opened_curve:
+        curve_source = opened_curve.convert("RGBA")
     for text, relative_x, relative_y in tags:
         x, y = int(width * relative_x), int(height * relative_y)
-        draw.text(
-            (x, y),
+        probe = ImageDraw.Draw(Image.new("L", (1, 1)))
+        bounds = probe.textbbox((0, 0), text, font=tag_font, stroke_width=1)
+        text_width = max(1, bounds[2] - bounds[0])
+        text_height = max(1, bounds[3] - bounds[1])
+        padding = max(10, int(height * 0.010))
+        curve_width = max(text_width, int(text_width * 1.13))
+        curve_height = max(
+            7,
+            round(curve_source.height * curve_width / curve_source.width),
+        )
+        curve = curve_source.resize(
+            (curve_width, curve_height),
+            Image.Resampling.LANCZOS,
+        )
+        patch = Image.new(
+            "RGBA",
+            (
+                max(text_width, curve_width) + padding * 2,
+                text_height + curve_height + padding * 2,
+            ),
+        )
+        curve_x = (patch.width - curve.width) // 2
+        curve_y = padding + max(0, int(text_height * 0.72))
+        patch.alpha_composite(curve, (curve_x, curve_y))
+        patch_draw = ImageDraw.Draw(patch)
+        origin = (
+            (patch.width - text_width) // 2 - bounds[0],
+            padding - bounds[1],
+        )
+        patch_draw.text(
+            (origin[0] + 1, origin[1] + 2),
             text,
             font=tag_font,
-            anchor="mm",
-            fill=(255, 255, 255, 250),
+            fill=(26, 22, 24, 125),
             stroke_width=1,
-            stroke_fill=(35, 35, 35, 145),
+            stroke_fill=(26, 22, 24, 75),
         )
-        bounds = draw.textbbox((x, y), text, font=tag_font, anchor="mm")
-        underline_y = bounds[3] + max(2, int(height * 0.004))
-        draw.line(
-            (
-                bounds[0] + int(width * 0.004),
-                underline_y,
-                bounds[2] - int(width * 0.002),
-                underline_y - int(height * 0.010),
-            ),
-            fill=(236, 55, 127, 245),
-            width=max(2, int(height * 0.003)),
+        patch_draw.text(
+            origin,
+            text,
+            font=tag_font,
+            fill=(255, 255, 255, 248),
+            stroke_width=1,
+            stroke_fill=(255, 255, 255, 150),
         )
+        patch = patch.rotate(
+            3.0,
+            resample=Image.Resampling.BICUBIC,
+            expand=True,
+        )
+        text_x = x - patch.width // 2
+        text_y = y - patch.height // 2
+        layer.alpha_composite(patch, (text_x, text_y))
     base.alpha_composite(layer)
 
 
@@ -1013,6 +1063,8 @@ def main() -> None:
         raise SystemExit("--comment can be repeated at most 24 times.")
     if args.subject_mask and not args.subject_mask.exists():
         raise SystemExit(f"Subject mask not found: {args.subject_mask}")
+    if args.name_curve and not args.name_curve.exists():
+        raise SystemExit(f"Cast-name curve not found: {args.name_curve}")
     if args.subject_mask and args.presentation != "standard":
         raise SystemExit("--subject-mask currently supports --presentation standard only.")
     name_tags = parse_name_tags(args.name_tag)
@@ -1108,8 +1160,14 @@ def main() -> None:
     caption_font_path = resolve_role_font(
         args.caption_font,
         args.font,
-        BUNDLED_CAPTION_BOLD_FONT,
+        BUNDLED_DIALOGUE_FONT,
         all_text,
+    )
+    name_font_path = resolve_role_font(
+        args.name_font or args.caption_font,
+        args.font,
+        BUNDLED_NAME_FONT,
+        " ".join(text for text, _, _ in name_tags) or all_text,
     )
     sponsor_font_path = resolve_role_font(
         args.sponsor_font,
@@ -1159,7 +1217,12 @@ def main() -> None:
         underline,
         flourish_path,
     )
-    draw_name_tags(base, caption_font_path, name_tags)
+    draw_name_tags(
+        base,
+        name_font_path,
+        name_tags,
+        args.name_curve or CAST_NAME_CURVE_ASSET,
+    )
     if not args.no_sponsor:
         draw_sponsor(
             base,

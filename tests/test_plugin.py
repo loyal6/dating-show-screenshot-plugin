@@ -44,7 +44,7 @@ class PluginTests(unittest.TestCase):
             )
         )
         self.assertEqual(plugin["name"], "dating-show-screenshot")
-        self.assertEqual(plugin["version"], "1.3.9")
+        self.assertEqual(plugin["version"], "1.4.5")
         self.assertEqual(plugin["skills"], "./skills/")
         self.assertEqual(marketplace["plugins"][0]["name"], plugin["name"])
         for asset in [
@@ -88,16 +88,21 @@ class PluginTests(unittest.TestCase):
 
     def test_role_fonts_are_bundled(self) -> None:
         font_dir = SKILL_ROOT / "assets" / "fonts"
-        for filename in [
-            "NotoSansSC-Regular.ttf",
-            "NotoSansSC-SemiBold.ttf",
-            "NotoSerifSC-Regular.ttf",
-            "NotoSerifSC-SemiBold.ttf",
-            "OFL.txt",
-        ]:
+        expected = {
+            "NotoSansSC-Regular.ttf": 1_000,
+            "NotoSansSC-SemiBold.ttf": 1_000,
+            "NotoSerifSC-Regular.ttf": 1_000,
+            "NotoSerifSC-SemiBold.ttf": 1_000,
+            "LXGWWenKai-Regular.ttf": 1_000,
+            "LXGWWenKai-OFL.txt": 1_000,
+            "BaiLuTongTong-Regular.ttf": 1_000,
+            "OFL.txt": 1_000,
+            "BaiLuTongTong-AUTHOR-NOTICE.txt": 300,
+        }
+        for filename, minimum_size in expected.items():
             path = font_dir / filename
             self.assertTrue(path.is_file(), filename)
-            self.assertGreater(path.stat().st_size, 1_000)
+            self.assertGreater(path.stat().st_size, minimum_size)
 
     def test_like_icon_is_white_with_real_transparency(self) -> None:
         path = SKILL_ROOT / "assets" / "ui" / "like-white.png"
@@ -109,6 +114,28 @@ class PluginTests(unittest.TestCase):
             self.assertEqual(alpha.getextrema(), (0, 255))
             opaque = image.getpixel((image.width // 2, image.height // 2))
             self.assertEqual(opaque[:3], (255, 255, 255))
+
+    def test_cast_name_curve_is_user_supplied_transparent_asset(self) -> None:
+        path = SKILL_ROOT / "assets" / "ui" / "cast-name-curve.png"
+        self.assertTrue(path.is_file())
+        with Image.open(path) as image:
+            self.assertEqual(image.mode, "RGBA")
+            self.assertEqual(image.size, (486, 100))
+            alpha = image.getchannel("A")
+            self.assertEqual(alpha.getextrema(), (0, 255))
+            self.assertEqual(alpha.getpixel((0, 0)), 0)
+            visible = [
+                pixel
+                for pixel in image.getdata()
+                if pixel[3] >= 200
+            ]
+            self.assertTrue(visible)
+            self.assertTrue(
+                any(
+                    red >= 200 and blue >= 130 and green < red
+                    for red, green, blue, _ in visible
+                )
+            )
 
     def test_no_real_show_reference_material_remains(self) -> None:
         forbidden_names = {
@@ -225,18 +252,80 @@ class PluginTests(unittest.TestCase):
 
     def test_renderer_supports_reference_layout_variants(self) -> None:
         with tempfile.TemporaryDirectory() as temporary:
-            output = self.run_renderer(
-                Path(temporary),
+            output_dir = Path(temporary)
+            photo_card = self.run_renderer(
+                output_dir,
                 "lijiang",
                 "做饭吃饭",
                 "--presentation",
                 "photo-card",
+                "--comments",
+                "3",
+            )
+            cast_introduction = self.run_renderer(
+                output_dir,
+                "mudanjiang",
+                "朋友闲聊",
                 "--name-tag",
                 "阿岚@0.34,0.29",
                 "--name-tag",
                 "小满@0.62,0.25",
-                "--comments",
-                "3",
+            )
+            self.assertTrue(photo_card.is_file())
+            self.assertTrue(cast_introduction.is_file())
+
+    def test_cast_names_use_separate_font_and_handwritten_treatment(self) -> None:
+        renderer = load_renderer_module()
+        background = (54, 54, 54, 255)
+        image = Image.new("RGBA", (1000, 500), background)
+        renderer.draw_name_tags(
+            image,
+            SKILL_ROOT / "assets" / "fonts" / "BaiLuTongTong-Regular.ttf",
+            [("小兰", 0.60, 0.28)],
+            SKILL_ROOT / "assets" / "ui" / "cast-name-curve.png",
+        )
+        changed = [
+            (x, y, image.getpixel((x, y)))
+            for y in range(90, 190)
+            for x in range(500, 700)
+            if image.getpixel((x, y)) != background
+        ]
+        self.assertTrue(changed)
+        white_pixels = [
+            pixel for _, _, pixel in changed if min(pixel[:3]) >= 225
+        ]
+        pink_pixels = [
+            pixel
+            for _, _, pixel in changed
+            if pixel[0] >= 210 and pixel[1] <= 130 and pixel[2] >= 100
+        ]
+        self.assertTrue(white_pixels)
+        self.assertTrue(pink_pixels)
+
+    def test_renderer_accepts_independent_name_font(self) -> None:
+        fonts = SKILL_ROOT / "assets" / "fonts"
+        with tempfile.TemporaryDirectory() as temporary:
+            output = self.run_renderer(
+                Path(temporary),
+                "lijiang",
+                "朋友闲聊",
+                "--name-tag",
+                "阿岚@0.34,0.29",
+                "--name-font",
+                str(fonts / "NotoSerifSC-Regular.ttf"),
+            )
+            self.assertTrue(output.is_file())
+
+    def test_renderer_accepts_independent_name_curve(self) -> None:
+        with tempfile.TemporaryDirectory() as temporary:
+            output = self.run_renderer(
+                Path(temporary),
+                "lijiang",
+                "朋友闲聊",
+                "--name-tag",
+                "阿岚@0.34,0.29",
+                "--name-curve",
+                str(SKILL_ROOT / "assets" / "ui" / "cast-name-curve.png"),
             )
             self.assertTrue(output.is_file())
 
@@ -256,13 +345,27 @@ class PluginTests(unittest.TestCase):
             )
             self.assertTrue(output.is_file())
 
+    def test_default_lower_third_uses_lxgw_wenkai(self) -> None:
+        renderer = load_renderer_module()
+        self.assertEqual(
+            renderer.BUNDLED_DIALOGUE_FONT.name,
+            "LXGWWenKai-Regular.ttf",
+        )
+        source = RENDERER.read_text(encoding="utf-8")
+        caption_resolution = source.split("caption_font_path =", 1)[1].split(
+            "name_font_path =", 1
+        )[0]
+        self.assertIn("BUNDLED_DIALOGUE_FONT", caption_resolution)
+        self.assertNotIn("BUNDLED_BOLD_FONT", caption_resolution)
+        self.assertNotIn("BUNDLED_CAPTION_BOLD_FONT", caption_resolution)
+
     def test_first_generation_lower_third_stays_wide_and_above_line(self) -> None:
         renderer = load_renderer_module()
         background = (118, 118, 118, 255)
         image = Image.new("RGBA", (1000, 500), background)
         renderer.draw_lower_third(
             image,
-            SKILL_ROOT / "assets" / "fonts" / "NotoSerifSC-SemiBold.ttf",
+            SKILL_ROOT / "assets" / "fonts" / "LXGWWenKai-Regular.ttf",
             "嘉宾",
             "今天聊点日常。",
             (185, 41, 80, 235),
